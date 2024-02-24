@@ -122,21 +122,20 @@ class ProductViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["POST"],url_path='create_product')
     def add_product(self, request):
         dataReceived = request.data  
+        serializer = ProductSerializer(data = dataReceived )
 
-        __data = {}
-        for el in dataReceived:
-            __data[el] = dataReceived.get(el)
-
-        serializer = ProductSerializer(data = __data )
-        
-        if Product.objects.filter(**__data).exists():
+        if Product.objects.filter(**dataReceived).exists():
             raise Exception("Duplicate Data")
+        
+        dataReceived['vendors'] = [dataReceived['vendors']]
 
-        if serializer.is_valid():           
+        if serializer.is_valid():  
+            #print(serializer.data)         
             serializer.save()
             serializer_data = serializer.data
             return Response(serializer_data)
         else:
+            print(serializer.errors)
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     @action(detail=True , methods=['PUT'],url_path='modify_product')
@@ -214,13 +213,9 @@ class CheckoutViewSet(viewsets.ModelViewSet):
     def add_status(self, request):
         dataReceived = request.data  
 
-        __data = {}
-        for el in dataReceived:
-            __data[el] = dataReceived.get(el)
-
-        serializer = CheckoutSerializer(data = __data )
+        serializer = CheckoutSerializer(data = dataReceived)
         
-        if Checkout.objects.filter(**__data).exists():
+        if Checkout.objects.filter(**dataReceived).exists():
             raise Exception("Duplicate Data")
 
         if serializer.is_valid():           

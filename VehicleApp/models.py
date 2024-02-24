@@ -46,7 +46,6 @@ class Vehicle(models.Model):
     vehicle_photo = models.ImageField(upload_to='Vehicle_Image', null=True, blank=True)
     vehicle_number = models.CharField(max_length = 100)
     vehicle_type = models.CharField(max_length = 100)
-    product_quantity = models.CharField(max_length = 100)
     delivery_challan_number = models.CharField(max_length = 100)
     purchase_order_number = models.CharField(max_length = 100)
     quality_check_status = models.CharField(max_length = 100 , choices = [(quality_status.value, quality_status.name) for quality_status in QualityCheck])
