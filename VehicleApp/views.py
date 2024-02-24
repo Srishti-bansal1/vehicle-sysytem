@@ -4,10 +4,9 @@ from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from rest_framework.parsers import FormParser
 # Create your views here.
-from .models import User, Vendor, Product
-from .serializers import UserSerializer, VendorSerializer, ProductSerializer, PurchaseOrderSerializer
+from .models import User, Vendor, Product, Vehicle, Checkout
+from .serializers import UserSerializer, VendorSerializer, ProductSerializer, PurchaseOrderSerializer, VehicleSerializer, CheckoutSerializer
 
 class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=["GET"],url_path='show_user')
@@ -112,7 +111,6 @@ class VendorViewSet(viewsets.ModelViewSet):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    #parser_classes = [FormParser]
     @action(detail=False, methods=["GET"],url_path='show_product')
     def get_product(self , request):
         queryset = Product.objects.all()
@@ -157,7 +155,96 @@ class ProductViewSet(viewsets.ModelViewSet):
         queryset.delete()
         return Response(status=status.HTTP_202_ACCEPTED)
     
+
+class VehicleViewSet(viewsets.ModelViewSet):
+    @action(detail=False, methods=["GET"],url_path='show_vehicle')
+    def get_vehicle(self , request):
+        queryset = Vehicle.objects.all()
+        if queryset:
+            serializer = VehicleSerializer(queryset,many = True)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=["POST"],url_path='create_vehicle')
+    def add_vehicle(self, request):
+        dataReceived = request.data  
+
+        __data = {}
+        for el in dataReceived:
+            __data[el] = dataReceived.get(el)
+
+        serializer = VehicleSerializer(data = __data )
+        
+        if Vehicle.objects.filter(**__data).exists():
+            raise Exception("Duplicate Data")
+
+        if serializer.is_valid():           
+            serializer.save()
+            serializer_data = serializer.data
+            return Response(serializer_data)
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=True , methods=['PUT'],url_path='modify_vehicle')
+    def update_vehicle(self,request,pk=None):
+        queryset = Vehicle.objects.get(pk=pk)
+        serializer = VehicleSerializer(instance = queryset, data= request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+    @action(detail=True , methods=['DELETE'],url_path='delete_vehicle')
+    def remove_vehicle(self,request,pk=None):
+        queryset = Vehicle.objects.get(pk=pk)  
+        queryset.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
     
+class CheckoutViewSet(viewsets.ModelViewSet):
+    @action(detail=False, methods=["GET"],url_path='show_checkout')
+    def get_checkout(self , request):
+        queryset = Checkout.objects.all()
+        if queryset:
+            serializer = Checkout(queryset,many = True)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=["POST"],url_path='create_status')
+    def add_status(self, request):
+        dataReceived = request.data  
+
+        __data = {}
+        for el in dataReceived:
+            __data[el] = dataReceived.get(el)
+
+        serializer = CheckoutSerializer(data = __data )
+        
+        if Checkout.objects.filter(**__data).exists():
+            raise Exception("Duplicate Data")
+
+        if serializer.is_valid():           
+            serializer.save()
+            serializer_data = serializer.data
+            return Response(serializer_data)
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    @action(detail=True , methods=['PUT'],url_path='modify_status')
+    def update_status(self,request,pk=None):
+        queryset = Checkout.objects.get(pk=pk)
+        serializer = CheckoutSerializer(instance = queryset, data= request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+        
+    @action(detail=True , methods=['DELETE'],url_path='delete_status')
+    def remove_status(self,request,pk=None):
+        queryset = Checkout.objects.get(pk=pk)  
+        queryset.delete()
+        return Response(status=status.HTTP_202_ACCEPTED)
     
 @api_view(['GET'])   
 def SignUp(request):
@@ -174,7 +261,7 @@ class PurchasrOrderViewSet(viewsets.ReadOnlyModelViewSet):
     def detailUser(self, request):
         purchase_order_number = int(request.GET['purchase_order_number'])
         print(purchase_order_number)
-        queryset = Product.objects.filter(purchase_order_number=purchase_order_number)
+        queryset = Vehicle.objects.filter(purchase_order_number=purchase_order_number)
         print(queryset)
         serializer = PurchaseOrderSerializer(queryset, many=True) 
         print(serializer.data)

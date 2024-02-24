@@ -1,4 +1,4 @@
-from .models import User, Vendor, Product
+from .models import User, Vendor, Product, Vehicle, Checkout
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,11 +16,21 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ('__all__')
 
+class VehicleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vehicle
+        fields = ('__all__')
+
+class CheckoutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Checkout
+        fields = ('__all__')
+
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     vendor_detail = serializers.SerializerMethodField()
 
     class Meta:
-        model = Product
+        model = Vehicle
         fields = ('vendor_detail','vendor_id','vehicle_photo','vehicle_number','vehicle_type','product_quantity','delivery_challan_number','purchase_order_number','purchase_date','quality_check_status')
         
     def get_vendor_detail(self,obj):          #this fun is defind becoz of EDMSmodel don't know about address (but address know about EDMSmodel)

@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from VehicleApp import views
-from VehicleApp.views import PurchasrOrderViewSet, UserViewSet, LoginVeiwSet, VendorViewSet, ProductViewSet
+from VehicleApp.views import PurchasrOrderViewSet, UserViewSet, LoginVeiwSet, VendorViewSet, ProductViewSet, VehicleViewSet, CheckoutViewSet
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter(trailing_slash=False)
@@ -25,6 +25,8 @@ router.register(r'user_signUp',UserViewSet, basename='user_signUp')
 router.register(r'user_logIn', LoginVeiwSet, basename='user_logIn')
 router.register(r'vendor', VendorViewSet, basename='vendor')
 router.register(r'product', ProductViewSet, basename='product')
+router.register(r'vehicle', VehicleViewSet, basename='vehicle')
+router.register(r'status', CheckoutViewSet, basename='status')
 router.register(r'purchase-no', PurchasrOrderViewSet, basename='purchase-no')
 
 urlpatterns = [

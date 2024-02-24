@@ -34,6 +34,14 @@ class Vendor (models.Model):
         ]
 
 class Product(models.Model):
+    name = models.CharField(max_length=100)
+    quantity = models.PositiveIntegerField()
+    vendors = models.ManyToManyField(Vendor, related_name='products')
+
+
+class Vehicle(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     vendor_id = models.ForeignKey(Vendor, default = None,  on_delete = models.CASCADE, related_name='vendor')
     vehicle_photo = models.ImageField(upload_to='Vehicle_Image', null=True, blank=True)
     vehicle_number = models.CharField(max_length = 100)
@@ -41,10 +49,8 @@ class Product(models.Model):
     product_quantity = models.CharField(max_length = 100)
     delivery_challan_number = models.CharField(max_length = 100)
     purchase_order_number = models.CharField(max_length = 100)
-    purchase_date = models.CharField(max_length = 100)
     quality_check_status = models.CharField(max_length = 100 , choices = [(quality_status.value, quality_status.name) for quality_status in QualityCheck])
 
-
-
-
-
+class Checkout(models.Model):
+    vehicle = models.ForeignKey(Vehicle, on_delete=models.CASCADE)
+    checkout_date = models.DateTimeField(auto_now_add=True)
