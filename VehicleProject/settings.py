@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'VehicleApp',
     'rest_framework',
     'rest_framework_simplejwt',
+    'drf-yasg'
 ]
 
 MIDDLEWARE = [
